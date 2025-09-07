@@ -1,2 +1,2 @@
 # ms-edit-gnulinux
-Build MS EDIT for Ubuntu
+Build MS EDIT for some Ubuntu distros

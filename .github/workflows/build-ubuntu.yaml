@@ -1,0 +1,39 @@
+
+name: Build Ubuntu binaries
+
+on: 
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ubuntudist: ["22.04", "24.04"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t builder-${{ matrix.ubuntudist }} \
+          --progress=plain \
+          --build-arg=UBUNTUDIST=${{ matrix.ubuntudist }} .
+
+      - name: Create container from image
+        run: docker create --name extract-${{ matrix.ubuntudist }} builder-${{ matrix.ubuntudist }}
+
+      - name: Copy binary out of container
+        run: docker cp extract-${{ matrix.ubuntudist }}:/usr/src/ms-edit/target/release/edit.xz ./ubuntu-${{ matrix.ubuntudist }}-msedit.xz
+
+      - name: Cleanup container
+        run: docker rm extract-${{ matrix.ubuntudist }}
+
+      - name: Upload binary to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ubuntu-${{ matrix.ubuntudist }}-msedit.xz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
