@@ -17,9 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t builder-${{ matrix.ubuntudist }} \
-          --progress=plain \
-          --build-arg=UBUNTUDIST=${{ matrix.ubuntudist }} .
+        run: docker build -t builder-${{ matrix.ubuntudist }} --progress=plain --build-arg=UBUNTUDIST=${{ matrix.ubuntudist }} .
 
       - name: Create container from image
         run: docker create --name extract-${{ matrix.ubuntudist }} builder-${{ matrix.ubuntudist }}
