@@ -1,9 +1,11 @@
 
 name: Build Ubuntu binaries
 
-on: 
+on:
   push:
-  workflow_dispatch:
+    tags:
+      - "v*"
+
 
 jobs:
   build:
